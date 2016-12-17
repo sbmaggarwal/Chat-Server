@@ -1,8 +1,7 @@
-import java.util.*;
+import java.util.Vector;
 
 
-public class OrbitRoomInfo
-{
+public class OrbitRoomInfo {
     // This class is just a data structure to hold information about a
     // chat room.  It needs its own source file because it's used by both
     // the OrbitRoomsDialog class and the OrbitClient class
@@ -14,13 +13,12 @@ public class OrbitRoomInfo
     boolean roomOwner;
     Vector userNames;
 
-    OrbitRoomInfo()
-    {
-	name = "";
-	creatorName = "";
-	priv = false;
-	invited = false;
-	roomOwner = false;
-	userNames = new Vector();
+    OrbitRoomInfo() {
+        name = "";
+        creatorName = "";
+        priv = false;
+        invited = false;
+        roomOwner = false;
+        userNames = new Vector();
     }
 }

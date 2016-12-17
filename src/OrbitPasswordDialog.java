@@ -3,9 +3,8 @@ import java.awt.event.*;
 
 
 public class OrbitPasswordDialog
-    extends Dialog
-    implements ActionListener, KeyListener, WindowListener
-{
+        extends Dialog
+        implements ActionListener, KeyListener, WindowListener {
     private OrbitWindow parentWindow;
     private OrbitPasswordEncryptor passwordEncryptor;
     private Label passwordLabel;
@@ -19,155 +18,150 @@ public class OrbitPasswordDialog
 
 
     public OrbitPasswordDialog(Frame parent, String myLabel,
-				 boolean IsModal)
-    {
-	super(parent, "Enter password", IsModal);
+                               boolean IsModal) {
+        super(parent, "Enter password", IsModal);
 
-	parentWindow = (OrbitWindow) parent;
-	
-	myLayout = new GridBagLayout();
-	setLayout(myLayout);
+        parentWindow = (OrbitWindow) parent;
 
-	myConstraints = new GridBagConstraints();
-	myConstraints.anchor = myConstraints.WEST;
-	myConstraints.insets = new Insets(5, 5, 0, 5);
-	myConstraints.fill = myConstraints.BOTH;
-	myConstraints.weightx = 1.0; myConstraints.weighty = 1.0;
-	myConstraints.gridheight = 1; myConstraints.gridwidth = 1;
+        myLayout = new GridBagLayout();
+        setLayout(myLayout);
 
-	passwordLabel = new Label(myLabel);
-	myConstraints.gridx = 0; myConstraints.gridy = 0;
-	myLayout.setConstraints(passwordLabel, myConstraints);
-	add(passwordLabel);
+        myConstraints = new GridBagConstraints();
+        myConstraints.anchor = myConstraints.WEST;
+        myConstraints.insets = new Insets(5, 5, 0, 5);
+        myConstraints.fill = myConstraints.BOTH;
+        myConstraints.weightx = 1.0;
+        myConstraints.weighty = 1.0;
+        myConstraints.gridheight = 1;
+        myConstraints.gridwidth = 1;
 
-	passwordField = new TextField(20);
-	passwordField.setEchoChar(new String("*").charAt(0));
-	passwordField.addKeyListener(this);
-	myConstraints.gridx = 0; myConstraints.gridy = 1;
-	myLayout.setConstraints(passwordField, myConstraints);
-	add(passwordField);
+        passwordLabel = new Label(myLabel);
+        myConstraints.gridx = 0;
+        myConstraints.gridy = 0;
+        myLayout.setConstraints(passwordLabel, myConstraints);
+        add(passwordLabel);
 
-	passwordWarningLabel1 =
-	    new Label("Warning: Your Java client cannot encrypt your");
-	passwordWarningLabel1
-	    .setVisible(!parentWindow.passwordEncryptor.canEncrypt);
-	passwordWarningLabel1.setFont(OrbitWindow.XsmallFont);
-	myConstraints.gridx = 0; myConstraints.gridy = 2;
-	myConstraints.fill = myConstraints.NONE;
-	myConstraints.insets.top = 5; myConstraints.insets.bottom = 0; 
-	myLayout.setConstraints(passwordWarningLabel1, myConstraints);
-	add(passwordWarningLabel1);
+        passwordField = new TextField(20);
+        passwordField.setEchoChar(new String("*").charAt(0));
+        passwordField.addKeyListener(this);
+        myConstraints.gridx = 0;
+        myConstraints.gridy = 1;
+        myLayout.setConstraints(passwordField, myConstraints);
+        add(passwordField);
 
-	passwordWarningLabel2 =
-	    new Label("passwords.  They will be sent as plain text.");
-	passwordWarningLabel2
-	    .setVisible(!parentWindow.passwordEncryptor.canEncrypt);
-	passwordWarningLabel2.setFont(OrbitWindow.XsmallFont);
-	myConstraints.gridx = 0; myConstraints.gridy = 3;
-	myConstraints.insets.top = 0; myConstraints.insets.bottom = 0; 
-	myLayout.setConstraints(passwordWarningLabel2, myConstraints);
-	add(passwordWarningLabel2);
+        passwordWarningLabel1 =
+                new Label("Warning: Your Java client cannot encrypt your");
+        passwordWarningLabel1
+                .setVisible(!parentWindow.passwordEncryptor.canEncrypt);
+        passwordWarningLabel1.setFont(OrbitWindow.XsmallFont);
+        myConstraints.gridx = 0;
+        myConstraints.gridy = 2;
+        myConstraints.fill = myConstraints.NONE;
+        myConstraints.insets.top = 5;
+        myConstraints.insets.bottom = 0;
+        myLayout.setConstraints(passwordWarningLabel1, myConstraints);
+        add(passwordWarningLabel1);
 
-	ok = new Button("Ok");
-	ok.setFont(parentWindow.smallFont);
-	ok.addActionListener(this);
-	ok.addKeyListener(this);
-	myConstraints.gridx = 0; myConstraints.gridy = 4;
-	myConstraints.weightx = 0; myConstraints.weighty = 0;
-	myConstraints.anchor = myConstraints.CENTER;
-	myConstraints.insets.top = 5; myConstraints.insets.bottom = 5; 
-	myLayout.setConstraints(ok, myConstraints);
-	add(ok);
+        passwordWarningLabel2 =
+                new Label("passwords.  They will be sent as plain text.");
+        passwordWarningLabel2
+                .setVisible(!parentWindow.passwordEncryptor.canEncrypt);
+        passwordWarningLabel2.setFont(OrbitWindow.XsmallFont);
+        myConstraints.gridx = 0;
+        myConstraints.gridy = 3;
+        myConstraints.insets.top = 0;
+        myConstraints.insets.bottom = 0;
+        myLayout.setConstraints(passwordWarningLabel2, myConstraints);
+        add(passwordWarningLabel2);
 
-	pack();
+        ok = new Button("Ok");
+        ok.setFont(parentWindow.smallFont);
+        ok.addActionListener(this);
+        ok.addKeyListener(this);
+        myConstraints.gridx = 0;
+        myConstraints.gridy = 4;
+        myConstraints.weightx = 0;
+        myConstraints.weighty = 0;
+        myConstraints.anchor = myConstraints.CENTER;
+        myConstraints.insets.top = 5;
+        myConstraints.insets.bottom = 5;
+        myLayout.setConstraints(ok, myConstraints);
+        add(ok);
 
-	// If this window is bigger than the parent window, place it at
-	// the same coordinates as the parent.
-	if ((parentWindow.getBounds().width <= getSize().width) ||
-	    (parentWindow.getBounds().height <= getSize().height))
-	    setLocation(parentWindow.getLocation().x,
-			parentWindow.getLocation().y);
-	else
-	    // Otherwise, place it centered within the parent window.
-	    setLocation((((parentWindow.getBounds().width - 
-			   getSize().width) / 2)
-			 + parentWindow.getLocation().x),
-			(((parentWindow.getBounds().height - 
-			   getSize().height) / 2)
-			 + parentWindow.getLocation().y));
+        pack();
 
-	addKeyListener(this);
-	addWindowListener(this);
-	setResizable(false);
-	setVisible(true);
-	passwordField.requestFocus();
+        // If this window is bigger than the parent window, place it at
+        // the same coordinates as the parent.
+        if ((parentWindow.getBounds().width <= getSize().width) ||
+                (parentWindow.getBounds().height <= getSize().height))
+            setLocation(parentWindow.getLocation().x,
+                    parentWindow.getLocation().y);
+        else
+            // Otherwise, place it centered within the parent window.
+            setLocation((((parentWindow.getBounds().width -
+                            getSize().width) / 2)
+                            + parentWindow.getLocation().x),
+                    (((parentWindow.getBounds().height -
+                            getSize().height) / 2)
+                            + parentWindow.getLocation().y));
+
+        addKeyListener(this);
+        addWindowListener(this);
+        setResizable(false);
+        setVisible(true);
+        passwordField.requestFocus();
     }
 
-    public String getPassword()
-    {
-	// Return the password that the user entered
-	return (password);
+    public String getPassword() {
+        // Return the password that the user entered
+        return (password);
     }
 
-    public void actionPerformed(ActionEvent E)
-    {
-	if (E.getSource() == ok)
-	    {
-		password = parentWindow.passwordEncryptor
-		    .encryptPassword(passwordField.getText());
-		dispose();
-		return;
-	    }
+    public void actionPerformed(ActionEvent E) {
+        if (E.getSource() == ok) {
+            password = parentWindow.passwordEncryptor
+                    .encryptPassword(passwordField.getText());
+            dispose();
+            return;
+        }
     }
 
-    public void keyPressed(KeyEvent E)
-    {
+    public void keyPressed(KeyEvent E) {
     }
 
-    public void keyReleased(KeyEvent E)
-    {
-	if (E.getKeyCode() == E.VK_ENTER)
-	    {
-		if ((E.getSource() == passwordField) || (E.getSource() == ok))
-		    {
-			password = parentWindow.passwordEncryptor
-			    .encryptPassword(passwordField.getText());
-			dispose();
-			return;
-		    }
-	    }
+    public void keyReleased(KeyEvent E) {
+        if (E.getKeyCode() == E.VK_ENTER) {
+            if ((E.getSource() == passwordField) || (E.getSource() == ok)) {
+                password = parentWindow.passwordEncryptor
+                        .encryptPassword(passwordField.getText());
+                dispose();
+                return;
+            }
+        }
     }
 
-    public void keyTyped(KeyEvent E)
-    {
-    }   
-
-    public void windowActivated(WindowEvent E)
-    {
+    public void keyTyped(KeyEvent E) {
     }
 
-    public void windowClosed(WindowEvent E)
-    {
+    public void windowActivated(WindowEvent E) {
     }
 
-    public void windowClosing(WindowEvent E)
-    {
-	dispose();
+    public void windowClosed(WindowEvent E) {
     }
 
-    public void windowDeactivated(WindowEvent E)
-    {
+    public void windowClosing(WindowEvent E) {
+        dispose();
     }
 
-    public void windowDeiconified(WindowEvent E)
-    {
+    public void windowDeactivated(WindowEvent E) {
     }
 
-    public void windowIconified(WindowEvent E)
-    {
+    public void windowDeiconified(WindowEvent E) {
     }
 
-    public void windowOpened(WindowEvent E)
-    {
+    public void windowIconified(WindowEvent E) {
+    }
+
+    public void windowOpened(WindowEvent E) {
     }
 }

@@ -3,13 +3,12 @@
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
+import java.io.IOException;
 
 
 public class OrbitCreateRoom
-    extends Dialog
-    implements ActionListener, ItemListener, KeyListener, WindowListener
-{
+        extends Dialog
+        implements ActionListener, ItemListener, KeyListener, WindowListener {
     protected OrbitWindow parentWindow;
     protected Label roomNameLabel;
     protected TextField roomName;
@@ -25,263 +24,262 @@ public class OrbitCreateRoom
     protected GridBagConstraints myConstraints;
 
 
-    OrbitCreateRoom(Frame parent)
-    {
-	super(parent, "Create a chat room", true);
+    OrbitCreateRoom(Frame parent) {
+        super(parent, "Create a chat room", true);
 
-	parentWindow = (OrbitWindow) parent;
+        parentWindow = (OrbitWindow) parent;
 
-	// Make all of the widgets
+        // Make all of the widgets
 
-	myLayout = new GridBagLayout();
-	myConstraints = new GridBagConstraints();
-	setLayout(myLayout);
-	
-	myConstraints.insets.top = 0; myConstraints.insets.bottom = 0;
-	myConstraints.insets.right = 5; myConstraints.insets.left = 5;
-	myConstraints.anchor = myConstraints.WEST;
-	myConstraints.weightx = 1.0; myConstraints.weighty = 1.0;
+        myLayout = new GridBagLayout();
+        myConstraints = new GridBagConstraints();
+        setLayout(myLayout);
 
-	roomNameLabel = new Label("Room name:");
-	roomNameLabel.setFont(parentWindow.smallFont);
-	myConstraints.gridx = 0; myConstraints.gridy = 0;
-	myConstraints.gridheight = 1; myConstraints.gridwidth = 2;
-	myConstraints.fill = myConstraints.NONE;
-	myLayout.setConstraints(roomNameLabel, myConstraints);
-	add(roomNameLabel);
+        myConstraints.insets.top = 0;
+        myConstraints.insets.bottom = 0;
+        myConstraints.insets.right = 5;
+        myConstraints.insets.left = 5;
+        myConstraints.anchor = myConstraints.WEST;
+        myConstraints.weightx = 1.0;
+        myConstraints.weighty = 1.0;
 
-	roomName = new TextField(30);
-	roomName.setFont(parentWindow.smallFont);
-	roomName.addKeyListener(this);
-	roomName.setEditable(true);
-	roomName.setEnabled(true);
-	myConstraints.gridx = 0; myConstraints.gridy = 1;
-	myConstraints.gridheight = 1; myConstraints.gridwidth = 2;
-	myConstraints.fill = myConstraints.BOTH;
-	myLayout.setConstraints(roomName, myConstraints);
-	add(roomName);
+        roomNameLabel = new Label("Room name:");
+        roomNameLabel.setFont(parentWindow.smallFont);
+        myConstraints.gridx = 0;
+        myConstraints.gridy = 0;
+        myConstraints.gridheight = 1;
+        myConstraints.gridwidth = 2;
+        myConstraints.fill = myConstraints.NONE;
+        myLayout.setConstraints(roomNameLabel, myConstraints);
+        add(roomNameLabel);
 
-	priv = new Checkbox("room is private", false);
-	priv.setFont(parentWindow.smallFont);
-	priv.setEnabled(true);
-	priv.addItemListener(this);
-	myConstraints.gridx = 0; myConstraints.gridy = 2;
-	myConstraints.gridheight = 1; myConstraints.gridwidth = 2;
-	myConstraints.fill = myConstraints.NONE;
-	myConstraints.insets.top = 5; myConstraints.insets.bottom = 0;
-	myLayout.setConstraints(priv, myConstraints);
-	add(priv);
+        roomName = new TextField(30);
+        roomName.setFont(parentWindow.smallFont);
+        roomName.addKeyListener(this);
+        roomName.setEditable(true);
+        roomName.setEnabled(true);
+        myConstraints.gridx = 0;
+        myConstraints.gridy = 1;
+        myConstraints.gridheight = 1;
+        myConstraints.gridwidth = 2;
+        myConstraints.fill = myConstraints.BOTH;
+        myLayout.setConstraints(roomName, myConstraints);
+        add(roomName);
 
-	passwordLabel = new Label("Password:");
-	passwordLabel.setFont(parentWindow.smallFont);
-	passwordLabel.setEnabled(priv.getState());
-	myConstraints.gridx = 0; myConstraints.gridy = 3;
-	myConstraints.gridheight = 1; myConstraints.gridwidth = 2;
-	myConstraints.fill = myConstraints.NONE;
-	myConstraints.insets.top = 0; myConstraints.insets.bottom = 0;
-	myLayout.setConstraints(passwordLabel, myConstraints);
-	add(passwordLabel);
+        priv = new Checkbox("room is private", false);
+        priv.setFont(parentWindow.smallFont);
+        priv.setEnabled(true);
+        priv.addItemListener(this);
+        myConstraints.gridx = 0;
+        myConstraints.gridy = 2;
+        myConstraints.gridheight = 1;
+        myConstraints.gridwidth = 2;
+        myConstraints.fill = myConstraints.NONE;
+        myConstraints.insets.top = 5;
+        myConstraints.insets.bottom = 0;
+        myLayout.setConstraints(priv, myConstraints);
+        add(priv);
 
-	password = new TextField();
-	password.setFont(parentWindow.smallFont);
-	password.addKeyListener(this);
-	password.setEditable(true);
-	password.setEnabled(priv.getState());
-	password.setEchoChar(new String("*").charAt(0));
-	myConstraints.gridx = 0; myConstraints.gridy = 4;
-	myConstraints.gridheight = 1; myConstraints.gridwidth = 2;
-	myConstraints.fill = myConstraints.BOTH;
-	myLayout.setConstraints(password, myConstraints);
-	add(password);
+        passwordLabel = new Label("Password:");
+        passwordLabel.setFont(parentWindow.smallFont);
+        passwordLabel.setEnabled(priv.getState());
+        myConstraints.gridx = 0;
+        myConstraints.gridy = 3;
+        myConstraints.gridheight = 1;
+        myConstraints.gridwidth = 2;
+        myConstraints.fill = myConstraints.NONE;
+        myConstraints.insets.top = 0;
+        myConstraints.insets.bottom = 0;
+        myLayout.setConstraints(passwordLabel, myConstraints);
+        add(passwordLabel);
 
-	passwordWarningLabel1 =
-	    new Label("Warning: Your Java client cannot encrypt your");
-	passwordWarningLabel1
-	    .setVisible(!parentWindow.passwordEncryptor.canEncrypt);
-	passwordWarningLabel1.setFont(OrbitWindow.XsmallFont);
-	passwordWarningLabel1.setEnabled(priv.getState());
-	myConstraints.gridx = 0; myConstraints.gridy = 5;
-	myConstraints.gridheight = 1; myConstraints.gridwidth = 2;
-	myConstraints.fill = myConstraints.NONE;
-	myLayout.setConstraints(passwordWarningLabel1, myConstraints);
-	add(passwordWarningLabel1);
+        password = new TextField();
+        password.setFont(parentWindow.smallFont);
+        password.addKeyListener(this);
+        password.setEditable(true);
+        password.setEnabled(priv.getState());
+        password.setEchoChar(new String("*").charAt(0));
+        myConstraints.gridx = 0;
+        myConstraints.gridy = 4;
+        myConstraints.gridheight = 1;
+        myConstraints.gridwidth = 2;
+        myConstraints.fill = myConstraints.BOTH;
+        myLayout.setConstraints(password, myConstraints);
+        add(password);
 
-	passwordWarningLabel2 =
-	    new Label("passwords.  They will be sent as plain text.");
-	passwordWarningLabel2
-	    .setVisible(!parentWindow.passwordEncryptor.canEncrypt);
-	passwordWarningLabel2.setFont(OrbitWindow.XsmallFont);
-	passwordWarningLabel2.setEnabled(priv.getState());
-	myConstraints.gridx = 0; myConstraints.gridy = 6;
-	myConstraints.gridheight = 1; myConstraints.gridwidth = 2;
-	myLayout.setConstraints(passwordWarningLabel2, myConstraints);
-	add(passwordWarningLabel2);
+        passwordWarningLabel1 =
+                new Label("Warning: Your Java client cannot encrypt your");
+        passwordWarningLabel1
+                .setVisible(!parentWindow.passwordEncryptor.canEncrypt);
+        passwordWarningLabel1.setFont(OrbitWindow.XsmallFont);
+        passwordWarningLabel1.setEnabled(priv.getState());
+        myConstraints.gridx = 0;
+        myConstraints.gridy = 5;
+        myConstraints.gridheight = 1;
+        myConstraints.gridwidth = 2;
+        myConstraints.fill = myConstraints.NONE;
+        myLayout.setConstraints(passwordWarningLabel1, myConstraints);
+        add(passwordWarningLabel1);
 
-	myConstraints.insets.top = 5; myConstraints.insets.bottom = 5;
+        passwordWarningLabel2 =
+                new Label("passwords.  They will be sent as plain text.");
+        passwordWarningLabel2
+                .setVisible(!parentWindow.passwordEncryptor.canEncrypt);
+        passwordWarningLabel2.setFont(OrbitWindow.XsmallFont);
+        passwordWarningLabel2.setEnabled(priv.getState());
+        myConstraints.gridx = 0;
+        myConstraints.gridy = 6;
+        myConstraints.gridheight = 1;
+        myConstraints.gridwidth = 2;
+        myLayout.setConstraints(passwordWarningLabel2, myConstraints);
+        add(passwordWarningLabel2);
 
-	ok = new Button("Ok");
-	ok.setFont(parentWindow.smallFont);
-	ok.addActionListener(this);
-	ok.addKeyListener(this);
-	ok.setEnabled(false);
-	myConstraints.gridx = 0; myConstraints.gridy = 7;
-	myConstraints.gridheight = 1; myConstraints.gridwidth = 1;
-	myConstraints.fill = myConstraints.NONE;
-	myConstraints.anchor = myConstraints.EAST;
-	myConstraints.insets.right = 0; myConstraints.insets.left = 5;
-	myLayout.setConstraints(ok, myConstraints);
-	add(ok);
+        myConstraints.insets.top = 5;
+        myConstraints.insets.bottom = 5;
 
-	cancel = new Button("Cancel");
-	cancel.setFont(parentWindow.smallFont);
-	cancel.addActionListener(this);
-	cancel.addKeyListener(this);
-	cancel.setEnabled(true);
-	myConstraints.gridx = 1; myConstraints.gridy = 7;
-	myConstraints.gridheight = 1; myConstraints.gridwidth = 1;
-	myConstraints.fill = myConstraints.NONE;
-	myConstraints.anchor = myConstraints.WEST;
-	myConstraints.insets.right = 5; myConstraints.insets.left = 0;
-	myLayout.setConstraints(cancel, myConstraints);
-	add(cancel);
+        ok = new Button("Ok");
+        ok.setFont(parentWindow.smallFont);
+        ok.addActionListener(this);
+        ok.addKeyListener(this);
+        ok.setEnabled(false);
+        myConstraints.gridx = 0;
+        myConstraints.gridy = 7;
+        myConstraints.gridheight = 1;
+        myConstraints.gridwidth = 1;
+        myConstraints.fill = myConstraints.NONE;
+        myConstraints.anchor = myConstraints.EAST;
+        myConstraints.insets.right = 0;
+        myConstraints.insets.left = 5;
+        myLayout.setConstraints(ok, myConstraints);
+        add(ok);
 
-	// register to receive the various events
-	addKeyListener(this);
-	addWindowListener(this);
+        cancel = new Button("Cancel");
+        cancel.setFont(parentWindow.smallFont);
+        cancel.addActionListener(this);
+        cancel.addKeyListener(this);
+        cancel.setEnabled(true);
+        myConstraints.gridx = 1;
+        myConstraints.gridy = 7;
+        myConstraints.gridheight = 1;
+        myConstraints.gridwidth = 1;
+        myConstraints.fill = myConstraints.NONE;
+        myConstraints.anchor = myConstraints.WEST;
+        myConstraints.insets.right = 5;
+        myConstraints.insets.left = 0;
+        myLayout.setConstraints(cancel, myConstraints);
+        add(cancel);
 
-	// show the window and get going
-	setSize(200, 200);
-	pack();
-	setLocation((((((parentWindow.getBounds()).width)
-	 	       - ((getSize()).width)) / 2)
-	 	     + ((parentWindow.getLocation()).x)),
-	 	    (((((parentWindow.getBounds()).height)
-	 	       - ((getSize()).height)) / 2)
-	 	     + ((parentWindow.getLocation()).y)));
+        // register to receive the various events
+        addKeyListener(this);
+        addWindowListener(this);
 
-	setVisible(true);
-	roomName.requestFocus();
+        // show the window and get going
+        setSize(200, 200);
+        pack();
+        setLocation((((((parentWindow.getBounds()).width)
+                        - ((getSize()).width)) / 2)
+                        + ((parentWindow.getLocation()).x)),
+                (((((parentWindow.getBounds()).height)
+                        - ((getSize()).height)) / 2)
+                        + ((parentWindow.getLocation()).y)));
+
+        setVisible(true);
+        roomName.requestFocus();
     }
 
-    protected void goCreate()
-    {
-	if (!roomName.getText().equals(""))
-	    {
-		String pword = "";
-		if (priv.getState())
-		    pword = parentWindow.passwordEncryptor
-			.encryptPassword(password.getText());
+    protected void goCreate() {
+        if (!roomName.getText().equals("")) {
+            String pword = "";
+            if (priv.getState())
+                pword = parentWindow.passwordEncryptor
+                        .encryptPassword(password.getText());
 
-		parentWindow.canvas.clear();
+            parentWindow.canvas.clear();
 
-		try {
-		    parentWindow.theClient
-			.sendEnterRoom(roomName.getText(), priv.getState(),
-				       pword);
-		}
-		catch (IOException e) {
-		    parentWindow.theClient.lostConnection();
-		    return;
-		}
+            try {
+                parentWindow.theClient
+                        .sendEnterRoom(roomName.getText(), priv.getState(),
+                                pword);
+            } catch (IOException e) {
+                parentWindow.theClient.lostConnection();
+                return;
+            }
 
-		parentWindow.currentRoom.name = roomName.getText();
-		parentWindow.roomOwner(true);
-		return;
-	    }
+            parentWindow.currentRoom.name = roomName.getText();
+            parentWindow.roomOwner(true);
+            return;
+        }
     }
 
-    public void actionPerformed(ActionEvent E)
-    {
-	if (E.getSource() == ok)
-	    {
-		goCreate();
-		dispose();
-		return;
-	    }
+    public void actionPerformed(ActionEvent E) {
+        if (E.getSource() == ok) {
+            goCreate();
+            dispose();
+            return;
+        }
 
-	if (E.getSource() == cancel)
-	    {
-		dispose();
-		return;
-	    }
+        if (E.getSource() == cancel) {
+            dispose();
+            return;
+        }
     }
 
-    public void itemStateChanged(ItemEvent E)
-    {
-	if (E.getSource() == priv)
-	    {
-		boolean state = priv.getState();
-		passwordLabel.setEnabled(state);
-		password.setEnabled(state);
-		passwordWarningLabel1.setEnabled(state);
-		passwordWarningLabel2.setEnabled(state);
-		return;
-	    }
+    public void itemStateChanged(ItemEvent E) {
+        if (E.getSource() == priv) {
+            boolean state = priv.getState();
+            passwordLabel.setEnabled(state);
+            password.setEnabled(state);
+            passwordWarningLabel1.setEnabled(state);
+            passwordWarningLabel2.setEnabled(state);
+            return;
+        }
     }
 
-    public void keyPressed(KeyEvent E)
-    {
+    public void keyPressed(KeyEvent E) {
     }
 
-    public void keyReleased(KeyEvent E)
-    {
-	if (E.getKeyCode() == E.VK_ENTER)
-	    {
-		if (E.getSource() == cancel)
-		    {
-			dispose();
-			return;
-		    }
-
-		else
-		    {
-			goCreate();
-			dispose();
-			return;
-		    }
-	    }
-
-	else if (E.getSource() == roomName)
-	    {
-		if (roomName.getText().equals(""))
-		    ok.setEnabled(false);
-		else
-		    ok.setEnabled(true);
-		return;
-	    }
+    public void keyReleased(KeyEvent E) {
+        if (E.getKeyCode() == E.VK_ENTER) {
+            if (E.getSource() == cancel) {
+                dispose();
+                return;
+            } else {
+                goCreate();
+                dispose();
+                return;
+            }
+        } else if (E.getSource() == roomName) {
+            if (roomName.getText().equals(""))
+                ok.setEnabled(false);
+            else
+                ok.setEnabled(true);
+            return;
+        }
     }
 
-    public void keyTyped(KeyEvent E)
-    {
-    }   
-
-    public void windowActivated(WindowEvent E)
-    {
+    public void keyTyped(KeyEvent E) {
     }
 
-    public void windowClosed(WindowEvent E)
-    {
+    public void windowActivated(WindowEvent E) {
     }
 
-    public void windowClosing(WindowEvent E)
-    {
- 	dispose();
-	return;
+    public void windowClosed(WindowEvent E) {
     }
 
-    public void windowDeactivated(WindowEvent E)
-    {
+    public void windowClosing(WindowEvent E) {
+        dispose();
+        return;
     }
 
-    public void windowDeiconified(WindowEvent E)
-    {
+    public void windowDeactivated(WindowEvent E) {
     }
 
-    public void windowIconified(WindowEvent E)
-    {
+    public void windowDeiconified(WindowEvent E) {
     }
 
-    public void windowOpened(WindowEvent E)
-    {
+    public void windowIconified(WindowEvent E) {
+    }
+
+    public void windowOpened(WindowEvent E) {
     }
 }
